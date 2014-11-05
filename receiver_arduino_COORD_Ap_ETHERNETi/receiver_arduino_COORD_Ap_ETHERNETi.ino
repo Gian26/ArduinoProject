@@ -9,7 +9,7 @@ byte mac[] = { 0x54, 0x34, 0x41, 0x30, 0x30, 0x31 };
 EthernetClient client;
 char server[] = "192.168.10.125"; // IP Adres (or name) of server to dump data to
 
-IPAddress ip(192,168,10,111);
+IPAddress ip(192,168,10,110);
 IPAddress dns_server(8,8,8,8);
 IPAddress subnet(255,255,255,0);
 IPAddress gateway(192,168,10,2);
@@ -43,11 +43,10 @@ void loop() {
         // now fill our zb rx class
         xbee.getResponse().getZBRxResponse(rx);
         // I check both bytes (or)
-        if (rx.getData(0) == 0x34 || rx.getData(0) == 0x76 ) {
           digitalWrite(6, HIGH);
           delay(1000);
           
-          if (client.connect(server, 80)) {
+          if (client.connect(server, 8888)) {
               //Serial.println("-> Connected");
               // Make a HTTP request:
               client.print( "GET /internetOfThings/iot.php?");
@@ -55,7 +54,7 @@ void loop() {
           //    client.print( temp  );
               //client.print("&&");
               //client.print("temperature=");
-              client.print( "12.3" );
+              client.print(rx.getData(0) );//sacar el dato del packet
               client.println( " HTTP/1.1");
               client.print( "Host: " );
               client.println(server);
@@ -71,10 +70,6 @@ void loop() {
             }
           digitalWrite(6, LOW);
           delay(1000);  
-       }
-       else{
-         digitalWrite(6,LOW);
-       }
       } 
    }
 }
